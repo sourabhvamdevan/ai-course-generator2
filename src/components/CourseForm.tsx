@@ -1,4 +1,6 @@
 
+
+
 import { useState } from "react";
 import type { Course } from "../types/course";
 
@@ -30,16 +32,35 @@ const CourseForm: React.FC<Props> = ({ onGenerate }) => {
         }
       );
 
+      // 🔴 Backend error (500 / 400 etc.)
       if (!res.ok) {
-        throw new Error("API request failed");
+        const errText = await res.text();
+        console.error("Backend error:", errText);
+        throw new Error("Backend returned error");
       }
 
-      const data: Course = await res.json();
-      onGenerate(data);
+      // 🔍 Read raw response first (safe)
+      const raw = await res.text();
+      console.log("RAW BACKEND RESPONSE:", raw);
+
+      const data = JSON.parse(raw);
+
+      // 🛑 Validate required structure
+      if (
+        !data ||
+        !data.title ||
+        !data.level ||
+        !Array.isArray(data.modules)
+      ) {
+        throw new Error("Invalid course format from backend");
+      }
+
+      // ✅ Finally update state
+      onGenerate(data as Course);
 
     } catch (err) {
-      console.error("Generation failed", err);
-      alert("Failed to generate course");
+      console.error("Generation failed:", err);
+      alert("Failed to generate course. Check backend response.");
     } finally {
       setLoading(false);
     }
@@ -75,4 +96,5 @@ const CourseForm: React.FC<Props> = ({ onGenerate }) => {
 };
 
 export default CourseForm;
+
 
