@@ -1,5 +1,7 @@
 
 
+
+
 import { useEffect, useState } from "react";
 
 interface HistoryItem {
@@ -12,9 +14,15 @@ const History = () => {
   const [items, setItems] = useState<HistoryItem[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/history")
-      .then(res => res.json())
-      .then(setItems);
+    fetch(`${import.meta.env.VITE_API_URL}/history`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch history");
+        }
+        return res.json();
+      })
+      .then(setItems)
+      .catch(err => console.error("History load failed:", err));
   }, []);
 
   return (
@@ -22,7 +30,9 @@ const History = () => {
       <h2>Generated Courses</h2>
       <ul>
         {items.map(i => (
-          <li key={i.id}>{i.title} ({i.level})</li>
+          <li key={i.id}>
+            {i.title} ({i.level})
+          </li>
         ))}
       </ul>
     </div>
@@ -30,3 +40,4 @@ const History = () => {
 };
 
 export default History;
+
