@@ -14,7 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/api/generate")
+@app.post("/generate")
 def generate(data: dict):
     course = generate_course(
         data["topic"],
