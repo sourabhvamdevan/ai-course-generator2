@@ -1,0 +1,6 @@
+
+
+venv/
+.env
+courses.db
+__pycache__/
