@@ -19,18 +19,16 @@ const CourseForm: React.FC<Props> = ({ onGenerate }) => {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/generate`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            topic,
-            level,
-            duration
-          })
-        }
-      );
+      const res = await fetch("/generate", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    topic,
+    level,
+    duration
+  })
+});
+
 
       const data: Course = await res.json();
       onGenerate(data);
