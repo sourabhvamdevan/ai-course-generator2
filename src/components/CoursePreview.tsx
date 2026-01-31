@@ -1,5 +1,5 @@
 import type { Course } from "../types/course";
-import PdfExport from "./pdfExport"
+import PdfExport from "./PdfExport"
 
 interface Props {
   course: Course | null;

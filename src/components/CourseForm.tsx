@@ -1,7 +1,8 @@
 
 
-import { useState, FormEvent } from "react";
-import type{ Course } from "../types/course";
+
+import { useState } from "react";
+import type { Course } from "../types/course";
 
 interface Props {
   onGenerate: (course: Course) => void;
@@ -13,40 +14,54 @@ const CourseForm: React.FC<Props> = ({ onGenerate }) => {
   const [duration, setDuration] = useState("4 weeks");
   const [loading, setLoading] = useState(false);
 
-  const submit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setLoading(true);
 
-   const res = await fetch(
-  `${import.meta.env.VITE_API_URL}/generate`,
-  {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      topic,
-      level,
-      duration
-    })
-  }
-);
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/generate`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            topic,
+            level,
+            duration
+          })
+        }
+      );
 
-
-    const data: Course = await res.json();
-    onGenerate(data);
-    setLoading(false);
+      const data: Course = await res.json();
+      onGenerate(data);
+    } catch (err) {
+      console.error("Generation failed", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <form onSubmit={submit} className="card">
+    <form onSubmit={handleSubmit} className="card">
       <h2>AI Course Generator</h2>
 
-      <input placeholder="Topic" value={topic} onChange={e => setTopic(e.target.value)} />
-      <select value={level} onChange={e => setLevel(e.target.value)}>
+      <input
+        placeholder="Topic"
+        value={topic}
+        onChange={(e) => setTopic(e.target.value)}
+        required
+      />
+
+      <select value={level} onChange={(e) => setLevel(e.target.value)}>
         <option>Beginner</option>
         <option>Intermediate</option>
         <option>Advanced</option>
       </select>
-      <input value={duration} onChange={e => setDuration(e.target.value)} />
+
+      <input
+        value={duration}
+        onChange={(e) => setDuration(e.target.value)}
+      />
 
       <button disabled={loading}>
         {loading ? "Generating..." : "Generate"}
