@@ -7,6 +7,7 @@ import type{ Course } from "./types/course";
 const App = () => {
   const [course, setCourse] = useState<Course | null>(null);
 
+  
   return (
     <div className="container">
       <CourseForm onGenerate={setCourse} />
